@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "938889219752",
+    "project_id": "ameame-shop",
+    "storage_bucket": "ameame-shop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:938889219752:android:afe0d9ff8d9f89a059fc9d",
+        "android_client_info": {
+          "package_name": "com.ameameshop.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "938889219752-4adohplbnuj2ufrndgurpdtt03e3tn52.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ameameshop.app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "938889219752-d2p09095kcnbhvdbr99m37uhu5kmbs4d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMh4erutfpRKqA3EeSY5SNj2ecWf5n5wU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "938889219752-d2p09095kcnbhvdbr99m37uhu5kmbs4d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

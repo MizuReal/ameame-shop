@@ -117,11 +117,7 @@ firebase-debug.log
 # Cloudinary
 .cloudinary/
 
-# Firebase Android config
-google-services.json
-!frontend/google-services.json
-*firebase-adminsdk-*.json
-frontend/google-services.json
+
 
 # Native build artifacts
 android/
