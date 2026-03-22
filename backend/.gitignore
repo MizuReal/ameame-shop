@@ -1,0 +1,5 @@
+#Do not upload test.js
+test.js
+
+#Env
+.env

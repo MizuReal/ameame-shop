@@ -1,0 +1,332 @@
+# ITCP239 React Native App - Project Roadmap
+
+## 1) Project Goal
+Build a production-like mobile e-commerce/service app using React Native (Expo) + Node/Express backend that satisfies all rubric items:
+- CRUD with image upload/camera
+- User auth + social login
+- Review/ratings with purchase verification
+- Cart persistence (SQLite preferred for full points)
+- Transactions + push notifications + deep link to order details
+- Search/filter
+- Redux for order/product/review
+- Drawer-based UI
+- JWT and push-token backend handling
+
+## 2) Confirmed Tech Stack
+Frontend:
+- Expo React Native + Expo Router
+- Redux Toolkit + React Redux
+- expo-camera, expo-image-picker
+- expo-sqlite, expo-secure-store
+- expo-notifications
+- @react-navigation/drawer
+
+Backend:
+- Express + Mongoose + MongoDB
+- JWT + bcryptjs
+- Multer + Cloudinary
+- Firebase Admin (social token verification)
+- expo-server-sdk (push notification sender)
+- express-validator
+
+## 3) Milestone Plan (Execution Order)
+
+### Milestone 0: Foundation Setup (Day 1)
+Deliverables:
+- Environment variables for backend, Cloudinary, Firebase, JWT, Expo push.
+- Base folder/module structure finalized.
+- API client setup in frontend with auth interceptor.
+
+Tasks:
+- Create `.env` schema and validation.
+- Configure DB connection and app startup checks.
+- Define shared response format and error middleware.
+
+Acceptance criteria:
+- Backend boots cleanly.
+- Frontend can hit health-check endpoint.
+- Basic logging and error responses are consistent.
+
+---
+
+### Milestone 1: User Auth + Profile (MP2 core + Unit 2 partial) (Days 2-3)
+Deliverables:
+- Register, login, token refresh/logout (if implemented), profile fetch/update.
+- Profile avatar upload via camera/gallery.
+- JWT stored in Expo SecureStore.
+
+Tasks:
+- Backend: `User` model, auth routes, bcrypt hashing, JWT issue/verify middleware.
+- Frontend: auth screens, protected routes, SecureStore token persistence.
+- Add push token field on user model (`pushTokens[]` recommended).
+
+Acceptance criteria:
+- User can register/login/logout.
+- App remains logged in after app restart.
+- User can update profile and avatar.
+- JWT auth protects private endpoints.
+
+---
+
+### Milestone 2: Product/Service CRUD + Image Upload (MP1) (Days 4-5)
+Deliverables:
+- Product/service create/read/update/delete.
+- Photo upload from camera or gallery.
+
+Tasks:
+- Backend: `Product` model, CRUD routes, multer + cloudinary upload.
+- Frontend: admin/manage product screens and image capture/picker.
+- Add list/detail views for browsing products.
+
+Acceptance criteria:
+- CRUD endpoints pass manual tests.
+- Uploaded image URLs are persisted and displayed in app.
+- Validation prevents invalid price/category payloads.
+
+---
+
+### Milestone 3: Search + Filters (Quiz 1) (Day 6)
+Deliverables:
+- Search by keyword.
+- Filter by category and price range (target full points).
+
+Tasks:
+- Backend query parameters: `q`, `category`, `minPrice`, `maxPrice`.
+- Frontend search bar + filter modal/panel + pagination optional.
+
+Acceptance criteria:
+- Combined filters return correct narrowed results.
+- Empty/no-result states handled cleanly.
+
+---
+
+### Milestone 4: Reviews & Ratings with Purchase Verification (MP3 + Redux part) (Days 7-8)
+Deliverables:
+- Authenticated users can create/update their own reviews.
+- Reviews only allowed for verified purchased products/services.
+
+Tasks:
+- Backend models: `Review`, relationship to `Order` and `User`.
+- Rule enforcement middleware/service: purchased-and-completed check.
+- Frontend UI for create/edit review from order history.
+- Redux slice for review state/actions.
+
+Acceptance criteria:
+- Non-buyers cannot review.
+- Buyer can edit only their own review.
+- Product details show aggregate rating and review list.
+
+---
+
+### Milestone 5: Cart Persistence with SQLite (MP4 full points) (Day 9)
+Deliverables:
+- Cart saved locally in SQLite before checkout.
+- Cart auto-restored on app launch.
+- Cart cleared after successful checkout.
+
+Tasks:
+- Define SQLite cart table schema.
+- Sync Redux cart state <-> SQLite operations.
+- Add fallback recovery if DB read fails.
+
+Acceptance criteria:
+- Force-close/reopen app restores cart.
+- Checkout success removes local cart entries.
+
+---
+
+### Milestone 6: Transactions + Status + Push Notifications (Term Test + Quiz 2) (Days 10-11)
+Deliverables:
+- Create completed transaction flow.
+- Update transaction status (admin/staff role).
+- Push notification sent on status update and promotions.
+- Tapping notification opens order detail screen.
+
+Tasks:
+- Backend: `Order` model and status lifecycle.
+- Save Expo push tokens on login; remove stale/invalid tokens.
+- Use `expo-server-sdk` to send transactional and promo pushes.
+- Frontend notification handlers + deep linking to order detail route.
+
+Acceptance criteria:
+- Status update triggers push.
+- Tapping push routes user to correct order details page.
+- Invalid push tokens are handled and cleaned up.
+
+---
+
+### Milestone 7: Redux Completion (Quiz 3) (Day 12)
+Deliverables:
+- Redux fully applied to product, order, and review flows.
+
+Tasks:
+- Create/normalize slices: `productSlice`, `orderSlice`, `reviewSlice`.
+- Add loading/error states and thunk-based async calls.
+- Ensure UI reads from Redux store, not scattered local states.
+
+Acceptance criteria:
+- Core data flows are centralized in Redux.
+- Clear async lifecycle state handling in UI.
+
+---
+
+### Milestone 8: Drawer UI + Final UX Pass (Unit 1 + Term Test Lec) (Day 13)
+Deliverables:
+- Drawer-based navigation structure.
+- Final UI polish and consistency pass.
+
+Tasks:
+- Add drawer routes for Home, Shop, Cart, Orders, Profile, Admin.
+- Improve loading, empty states, validation and toasts.
+- Ensure responsive behavior on common screen sizes.
+
+Acceptance criteria:
+- Drawer navigation works across protected/unprotected routes.
+- UI is consistent and presentation-ready.
+
+---
+
+### Milestone 9: Integration Testing + Demo Readiness (Day 14)
+Deliverables:
+- End-to-end tested demo script.
+- Backup demo data and known-issues list.
+
+Tasks:
+- Test matrix: auth, CRUD, reviews, cart restore, checkout, notifications.
+- Seed script or manual seed data.
+- Prepare presentation flow and contingency notes.
+
+Acceptance criteria:
+- All rubric items demonstrable in a single walkthrough.
+- No blocker bugs for graded features.
+
+---
+
+## 4) Tools Reference
+
+### Backend Tools
+
+| Package | Purpose in this project |
+|---|---|
+| `express` | HTTP server — all API routes |
+| `mongoose` | MongoDB ODM — User, Product, Order, Review models |
+| `cors` | Allow frontend to call backend API |
+| `dotenv` | Load `.env` vars (DB URL, JWT secret, Cloudinary keys, etc.) |
+| `jsonwebtoken` | Issue and verify JWTs on login/register |
+| `bcryptjs` | Hash user passwords before saving to DB |
+| `multer` | Parse `multipart/form-data` image uploads |
+| `multer-storage-cloudinary` | Stream multer uploads directly to Cloudinary |
+| `cloudinary` | Store and serve product/avatar images |
+| `firebase-admin` | Verify Google/Facebook ID tokens from Firebase on the server |
+| `expo-server-sdk` | Send push notifications to Expo devices (order status + promos) |
+| `express-validator` | Validate request body on auth/CRUD/review endpoints |
+| `nodemon` (dev) | Auto-restart backend on file change during development |
+
+### Frontend Tools
+
+| Package | Purpose in this project |
+|---|---|
+| `expo-secure-store` | Store JWT token securely on device (Unit 2) |
+| `expo-sqlite` | Persist cart contents locally; restore on app open (MP4 — 20pts) |
+| `expo-notifications` | Receive push notifications; handle tap → order detail (Quiz 2 + Term Test) |
+| `expo-camera` | Take product/avatar photos with device camera (MP1, MP2) |
+| `expo-image-picker` | Pick photos from gallery for product/avatar upload (MP1, MP2) |
+| `@reduxjs/toolkit` | Define `productSlice`, `orderSlice`, `reviewSlice` (Quiz 3) |
+| `react-redux` | Connect Redux store to components |
+| `axios` | API calls to backend; attach JWT in request interceptor |
+| `expo-router` | File-based routing; deep link from notification to `/orders/[id]` |
+| `expo-linking` | Handle deep links from push notification tap |
+| `@react-navigation/native` | Navigation foundation |
+| `@react-navigation/drawer` | Drawer navigation layout (Unit 1 — 20pts) ⚠️ Install required |
+| `react-native-gesture-handler` | Required peer dep for drawer/navigation |
+| `react-native-reanimated` | Animations for drawer and transitions |
+| `react-native-safe-area-context` | Safe area for notch/drawer layouts |
+| `react-native-screens` | Native screen optimization for navigation |
+| `firebase` | Google/Facebook sign-in flow from app (MP2 — 20pts) |
+| `expo-auth-session` | Manages the Google/Facebook OAuth redirect session ⚠️ Install required |
+| `expo-web-browser` | Opens OAuth browser popup for Google/Facebook login ⚠️ Install required |
+| `expo-crypto` | Generates PKCE code verifier for `expo-auth-session` ⚠️ Install required |
+| `expo-constants` | Access `projectId` for Expo push token registration |
+| `@react-native-async-storage/async-storage` | Peer dep for drawer + async storage fallback ⚠️ Install required |
+| `expo-font` | Load custom fonts on startup |
+| `expo-splash-screen` | Control splash screen until fonts/auth state loads |
+| `expo-linear-gradient` | Gradient backgrounds (splash, banners) |
+| `@expo/vector-icons` | Icons across UI (drawer, nav, buttons) |
+| `phosphor-react-native` | Additional icon library |
+
+### Missing Frontend Packages — Install Command
+
+```bash
+npx expo install @react-navigation/drawer @react-native-async-storage/async-storage expo-auth-session expo-web-browser expo-crypto
+```
+
+### Tool → Graded Requirement Map
+
+| Tool | Graded Item |
+|---|---|
+| `expo-secure-store` | Unit 2 — JWT secure storage |
+| `expo-sqlite` | MP4 — SQLite cart persistence (20pts) |
+| `expo-notifications` + `expo-server-sdk` | Quiz 2 + Term Test — push notifications |
+| `expo-router` + `expo-linking` | Term Test — tap notification → order detail |
+| `expo-camera` + `expo-image-picker` | MP1 + MP2 — photo upload/camera |
+| `firebase` + `firebase-admin` | MP2 — Google/Facebook login (20pts) |
+| `expo-auth-session` + `expo-web-browser` + `expo-crypto` | MP2 — OAuth flow |
+| `@reduxjs/toolkit` + `react-redux` | Quiz 3 — Redux on orders/products/reviews |
+| `@react-navigation/drawer` | Unit 1 — drawer UI (20pts) |
+| `jsonwebtoken` + `bcryptjs` | Unit 2 — backend JWT auth |
+| `multer` + `cloudinary` | MP1 + MP2 — image upload backend |
+| `express-validator` | All CRUD endpoints — input validation |
+| `expo-server-sdk` (backend) | Unit 2 — save/remove stale push tokens |
+
+---
+
+## 5) API / Model Checklist (Minimum)
+
+Models:
+- `User` — auth, profile, pushTokens[]
+- `Product` — CRUD, image, category, price
+- `Review` — rating, text, linked to User + Product + Order
+- `Order` — items, status lifecycle, linked to User
+- `NotificationLog` (optional) — track sent promos
+
+Critical backend endpoints:
+- Auth: `POST /auth/register`, `POST /auth/login`, `GET /auth/profile`, `PUT /auth/profile`, `POST /auth/social`
+- Product: `POST /products`, `GET /products`, `GET /products/:id`, `PUT /products/:id`, `DELETE /products/:id`
+- Review: `POST /reviews`, `PUT /reviews/:id`, `GET /reviews?product=:id`
+- Order: `POST /orders`, `GET /orders`, `GET /orders/:id`, `PUT /orders/:id/status`
+- Push: `POST /push/register`, `DELETE /push/remove`, `POST /push/send-promo` (admin)
+
+---
+
+## 6) Definition of Done (Per Graded Item)
+
+| Item | Done When |
+|---|---|
+| MP1 | Product/service full CRUD with camera/gallery photo upload |
+| MP2 (15pts) | Register/login/profile update with photo |
+| MP2 (20pts) | Google/Facebook OAuth working and verified server-side |
+| MP3 | Verified purchase required before review; user can edit own review |
+| MP4 (20pts) | SQLite cart persists on app restart; cleared after checkout |
+| Term Test | Transaction creation → status update → push sent → tap opens order detail |
+| Quiz 1 (15pts) | Search + category + price range filters working together |
+| Quiz 2 | Promo push sent; tapping notification opens detail view |
+| Quiz 3 | Redux slices drive product, order, and review data flows |
+| Unit 1 | Drawer navigation UI integrated and presentation-ready |
+| Unit 2 | JWT in SecureStore; push tokens saved on user; stale tokens cleaned up |
+
+---
+
+## 7) Immediate Next 5 Tasks (Start Here)
+1. Install missing frontend packages (`@react-navigation/drawer`, `expo-auth-session`, `expo-web-browser`, `expo-crypto`, `@react-native-async-storage/async-storage`).
+2. Implement auth + JWT secure token storage + profile update (Milestone 1).
+3. Implement product CRUD with Cloudinary upload (Milestone 2).
+4. Implement SQLite cart persistence and restoration (Milestone 5).
+5. Implement order checkout + status update + push notifications (Milestone 6).
+
+---
+
+## 8) Suggested Daily Delivery Discipline
+- End each day with one merged, working vertical slice.
+- Keep a `demo-ready` branch stable at all times.
+- Record blockers in `docs/blockers.md`.
+- Update this roadmap with completed dates as milestones are finished.

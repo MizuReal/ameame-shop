@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "ameame",
+    "slug": "ameame",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ameameshop.app"
+    },
+    "android": {
+      "package": "com.ameameshop.app",
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      "expo-sqlite",
+      "expo-notifications",
+      "expo-web-browser"
+    ],
+    "scheme": "ameame",
+    "extra": {
+      "eas": {
+        "projectId": "adcb6870-b2f0-4267-8649-7e0186fa2e72"
+      }
+    },
+    "owner": "mizureal"
+  }
+}
