@@ -65,6 +65,7 @@ export default function Grid({
   onEndReached,
   onEndReachedThreshold       = 0.5,
   showsVerticalScrollIndicator = false,
+  refreshControl,
   ListEmptyComponent,
   ListHeaderComponent,
   ListFooterComponent,
@@ -81,6 +82,7 @@ export default function Grid({
       showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       onEndReached={onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
+      refreshControl={refreshControl}
       ListEmptyComponent={ListEmptyComponent}
       ListHeaderComponent={ListHeaderComponent}
       ListFooterComponent={ListFooterComponent}

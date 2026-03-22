@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ShoppingCartIcon } from "phosphor-react-native";
 
 import { useColors } from "@colors/colorContext";
@@ -128,6 +128,7 @@ export default function ProductContainer({ navigation, onNavigateToSearch, onOpe
   const [newArrivals, setNewArrivals] = useState([]);
   const [popular, setPopular] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [isFetchingMorePopular, setIsFetchingMorePopular] = useState(false);
   const [error, setError] = useState(null);
   const [lastLoadedCategory, setLastLoadedCategory] = useState("all");
@@ -161,8 +162,12 @@ export default function ProductContainer({ navigation, onNavigateToSearch, onOpe
     };
   }, []);
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
+  const fetchProducts = useCallback(async ({ isRefresh = false } = {}) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
 
     const categoryFilter = activeCategory !== "all" ? [activeCategory] : [];
@@ -208,8 +213,13 @@ export default function ProductContainer({ navigation, onNavigateToSearch, onOpe
       setError(err?.message || "Failed to load products.");
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, [activeCategory]);
+
+  const handleRefresh = useCallback(() => {
+    fetchProducts({ isRefresh: true });
+  }, [fetchProducts]);
 
   useEffect(() => {
     fetchProducts();
@@ -461,6 +471,7 @@ export default function ProductContainer({ navigation, onNavigateToSearch, onOpe
       listFooter={popularFooter}
       onEndReached={loadMorePopular}
       onEndReachedThreshold={0.7}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
     />
   );
 }

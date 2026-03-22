@@ -89,7 +89,55 @@ async function sendPushMessages({ user, messages, debugLabel }) {
   let failed = 0;
 
   for (const chunk of expo.chunkPushNotifications(payloads)) {
-    const tickets = await expo.sendPushNotificationsAsync(chunk);
+    let tickets;
+
+    try {
+      tickets = await expo.sendPushNotificationsAsync(chunk);
+    } catch (chunkError) {
+      const isConflict =
+        typeof chunkError?.message === "string" &&
+        chunkError.message.includes("same project");
+
+      if (!isConflict) {
+        throw chunkError;
+      }
+
+      if (shouldDebugPush()) {
+        console.log(
+          `[push-debug] conflicting tokens detected, falling back to per-token send (${chunk.length} tokens)`
+        );
+      }
+
+      // Send each token individually so valid ones still go through.
+      for (const singlePayload of chunk) {
+        try {
+          const [singleTicket] = await expo.sendPushNotificationsAsync([singlePayload]);
+          if (singleTicket?.status === "ok") {
+            sent += 1;
+          } else {
+            failed += 1;
+            if (shouldDebugPush()) {
+              console.log(
+                `[push-debug] per-token error to=${String(singlePayload?.to || "")} code=${String(singleTicket?.details?.error || singleTicket?.message || "unknown")}`
+              );
+            }
+          }
+        } catch (singleError) {
+          failed += 1;
+          // Token is from a different project — mark it for removal.
+          if (typeof singlePayload?.to === "string") {
+            invalidFromReceipts.add(singlePayload.to);
+          }
+          if (shouldDebugPush()) {
+            console.log(
+              `[push-debug] per-token throw to=${String(singlePayload?.to || "")} error=${singleError?.message || "unknown"}`
+            );
+          }
+        }
+      }
+      continue;
+    }
+
     const okCount = tickets.filter((ticket) => ticket.status === "ok").length;
     const errorTickets = tickets
       .map((ticket, index) => ({ ticket, index }))

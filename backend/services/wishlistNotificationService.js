@@ -65,10 +65,8 @@ async function enqueueWishlistDiscountEvents(product) {
 }
 
 async function processWishlistDiscountQueue() {
-  const cutoff = minutesAgo(BATCH_MINUTES);
   const events = await WishlistDiscountEvent.find({
     processedAt: null,
-    createdAt: { $lte: cutoff },
   })
     .sort({ createdAt: 1 })
     .limit(500)
@@ -83,8 +81,7 @@ async function processWishlistDiscountQueue() {
 
   const [users, products, wishlists] = await Promise.all([
     User.find({ _id: { $in: userIds } })
-      .select("pushTokens isActive lastWishlistNotificationAt")
-      .lean(),
+      .select("pushTokens isActive lastWishlistNotificationAt firebaseUid email displayName"),
     Product.find({ _id: { $in: productIds } })
       .select("name discountType discountValue discountStartAt discountEndAt discountedPrice price")
       .lean(),
@@ -175,37 +172,46 @@ async function processWishlistDiscountQueue() {
     }));
 
     const totalCount = validEvents.length;
-    await sendWishlistDiscountPush({
-      user,
-      products: productsForMessage,
-      totalCount,
-    });
 
-    const eventIds = userEvents.map((event) => event._id);
-    await WishlistDiscountEvent.updateMany(
-      { _id: { $in: eventIds } },
-      { $set: { processedAt: now } }
-    );
+    try {
+      await sendWishlistDiscountPush({
+        user,
+        products: productsForMessage,
+        totalCount,
+      });
 
-    await User.updateOne(
-      { _id: userId },
-      { $set: { lastWishlistNotificationAt: now } }
-    );
+      const eventIds = userEvents.map((event) => event._id);
+      await WishlistDiscountEvent.updateMany(
+        { _id: { $in: eventIds } },
+        { $set: { processedAt: now } }
+      );
 
-    const wishlistUpdates = selected.map((item) => ({
-      updateOne: {
-        filter: { _id: item.wishlistEntry._id },
-        update: {
-          $set: {
-            lastNotifiedDiscountAt: now,
-            lastNotifiedDiscountPercent: Number(item.event.discountPercent || 0),
+      await User.updateOne(
+        { _id: userId },
+        { $set: { lastWishlistNotificationAt: now } }
+      );
+
+      const wishlistUpdates = selected.map((item) => ({
+        updateOne: {
+          filter: { _id: item.wishlistEntry._id },
+          update: {
+            $set: {
+              lastNotifiedDiscountAt: now,
+              lastNotifiedDiscountPercent: Number(item.event.discountPercent || 0),
+            },
           },
         },
-      },
-    }));
+      }));
 
-    if (wishlistUpdates.length) {
-      await Wishlist.bulkWrite(wishlistUpdates);
+      if (wishlistUpdates.length) {
+        await Wishlist.bulkWrite(wishlistUpdates);
+      }
+    } catch (sendError) {
+      console.error(
+        `[wishlist-push] failed for user=${userId} products=${productsForMessage.map((p) => p.name).join(",")}`,
+        sendError?.message || sendError
+      );
+      await markEvents(userEvents, "send_error");
     }
   }
 }

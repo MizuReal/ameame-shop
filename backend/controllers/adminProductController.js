@@ -582,8 +582,10 @@ async function updateProduct(req, res, next) {
         Math.abs(nextDiscountPercent - previousDiscountPercent) >= significantThreshold);
 
     if (shouldTriggerWishlistEvent) {
-      const { enqueueWishlistDiscountEvents } = require("../services/wishlistNotificationService");
-      enqueueWishlistDiscountEvents(product).catch(() => null);
+      const { enqueueWishlistDiscountEvents, processWishlistDiscountQueue } = require("../services/wishlistNotificationService");
+      enqueueWishlistDiscountEvents(product)
+        .then(() => processWishlistDiscountQueue())
+        .catch(() => null);
     }
 
     return res.status(200).json({
@@ -752,8 +754,10 @@ async function batchUpdateDiscounts(req, res, next) {
     }
 
     if (triggers.length) {
-      const { enqueueWishlistDiscountEvents } = require("../services/wishlistNotificationService");
-      triggers.forEach((product) => enqueueWishlistDiscountEvents(product).catch(() => null));
+      const { enqueueWishlistDiscountEvents, processWishlistDiscountQueue } = require("../services/wishlistNotificationService");
+      await Promise.all(triggers.map((product) => enqueueWishlistDiscountEvents(product).catch(() => null)));
+      // Process immediately so users get notified right away.
+      processWishlistDiscountQueue().catch(() => null);
     }
 
     const updated = await Product.find({ _id: { $in: ids } }).lean();

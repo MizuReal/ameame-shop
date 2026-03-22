@@ -19,6 +19,7 @@ export default function ProductList({
   listFooter,
   onEndReached,
   onEndReachedThreshold = 0.7,
+  refreshControl,
 }) {
   if (variant === "scroll") {
     return (
@@ -56,6 +57,7 @@ export default function ProductList({
       ListFooterComponent={listFooter}
       onEndReached={onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
+      refreshControl={refreshControl}
       renderItem={({ item }) => 
   item ? (
     <ProductCard

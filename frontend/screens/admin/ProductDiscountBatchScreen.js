@@ -22,6 +22,7 @@ import Screen from "@components/layout/Screen";
 import Dropdown from "@components/input/Dropdown";
 import SearchBar from "@components/input/SearchBar";
 import TextInput from "@components/input/TextInput";
+import DateInput from "@components/input/DateInput";
 import Accordion from "@components/utility/Accordion";
 import SectionHeader from "@components/display/SectionHeader";
 import Badge from "@components/display/Badge";
@@ -365,8 +366,8 @@ export default function ProductDiscountBatchScreen() {
             <Dropdown label="Type" value={bulk.discountType} options={discountTypeOptions} onChange={v => setBulk(b => ({ ...b, discountType: v }))} />
             <TextInput label="Value" keyboardType="numeric" value={bulk.discountValue} onChangeText={v => setBulk(b => ({ ...b, discountValue: v }))} error={bulkErrors.discountValue} />
             <View style={s.priceRow}>
-              <View style={{ flex: 1 }}><TextInput label="Starts" value={bulk.discountStartAt} onChangeText={v => setBulk(b => ({ ...b, discountStartAt: v }))} placeholder="YYYY-MM-DD" /></View>
-              <View style={{ flex: 1 }}><TextInput label="Ends" value={bulk.discountEndAt} onChangeText={v => setBulk(b => ({ ...b, discountEndAt: v }))} placeholder="YYYY-MM-DD" /></View>
+              <View style={{ flex: 1 }}><DateInput label="Starts" value={bulk.discountStartAt} onChange={v => setBulk(b => ({ ...b, discountStartAt: v }))} placeholder="Select start date" /></View>
+              <View style={{ flex: 1 }}><DateInput label="Ends" value={bulk.discountEndAt} onChange={v => setBulk(b => ({ ...b, discountEndAt: v }))} placeholder="Select end date" /></View>
             </View>
             <Button label={bulkSaving ? "Applying..." : "Apply Batch Update"} onPress={applyBulkDiscounts} loading={bulkSaving} disabled={bulkSaving || selectedCount === 0} variant="primary" />
           </View>
