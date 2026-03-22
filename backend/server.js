@@ -5,7 +5,6 @@ require("dotenv").config({
 
 const cors = require("cors");
 const express = require("express");
-const rateLimit = require("express-rate-limit");
 
 const { connectToDatabase } = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -33,22 +32,6 @@ app.use(
   })
 );
 app.use(express.json());
-
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    error: {
-      code: "RATE_LIMITED",
-      message: "Too many requests. Please try again later.",
-      status: 429,
-    },
-  },
-});
-
-app.use(globalLimiter);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
