@@ -327,7 +327,7 @@ export default function OrderManagementScreen() {
                 </>
               ) : (
                 <>
-                  <PackageIcon size={48} weight="thin" color={rgb(tokens["--icon-neutral-quaternary"])} />
+                  <PackageIcon size={48} weight="thin" color={rgb(tokens["--icon-neutral-weak"])} />
                   <Text style={[type.label, { color: rgb(tokens["--text-neutral-tertiary"]), marginTop: 12 }]}>
                     No orders found.
                   </Text>

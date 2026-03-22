@@ -121,7 +121,8 @@ function WheelColumn({ data, selectedIndex, onSelect, tokens, formatItem }) {
           s.selectionBand,
           {
             top: ITEM_HEIGHT * Math.floor(VISIBLE_ITEMS / 2),
-            backgroundColor: rgb(tokens["--surface-neutral-subtle"]),
+            borderWidth: 1,
+            borderColor: rgb(tokens["--border-neutral-secondary"]),
           },
         ]}
       />
@@ -333,7 +334,7 @@ const s = StyleSheet.create({
     right: 0,
     height: ITEM_HEIGHT,
     borderRadius: 6,
-    zIndex: 1,
+    zIndex: -1,
   },
   wheelItem: {
     height: ITEM_HEIGHT,

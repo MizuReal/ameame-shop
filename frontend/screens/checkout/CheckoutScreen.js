@@ -391,7 +391,7 @@ export default function CheckoutScreen({ navigation }) {
 
 const s = StyleSheet.create({
   content: {
-    paddingBottom: 20,
+    paddingBottom: 64,
   },
   container: {
     paddingHorizontal: 16,

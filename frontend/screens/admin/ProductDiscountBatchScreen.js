@@ -71,6 +71,18 @@ function mergeById(existingItems, nextItems) {
 const ProductRow = memo(function ProductRow({ item, selected, onToggle, tokens, type }) {
   const imageUrl = item?.image?.url || item?.images?.[0]?.url || "";
 
+  const price = Number(item.price || 0);
+  const discountType = item.discountType || "";
+  const discountValue = Number(item.discountValue || 0);
+
+  let effectivePrice = price;
+  if (discountType === "percent" && discountValue > 0) {
+    effectivePrice = Math.max(0, price * (1 - discountValue / 100));
+  } else if (discountType === "fixed" && discountValue > 0) {
+    effectivePrice = Math.max(0, price - discountValue);
+  }
+  const hasDiscount = discountType && discountValue > 0 && effectivePrice < price;
+
   return (
     <Card 
       variant="outlined" 
@@ -78,7 +90,7 @@ const ProductRow = memo(function ProductRow({ item, selected, onToggle, tokens, 
       padding="md" 
       style={[
         s.productCard,
-        selected && { borderColor: rgb(tokens["--border-brand-primary"]), backgroundColor: rgb(tokens["--surface-brand-subtle"]) }
+        selected && { borderColor: rgb(tokens["--border-brand-primary"]), backgroundColor: rgb(tokens["--surface-brand-secondary"]) }
       ]}
     >
       <Pressable onPress={() => onToggle?.(item.id)} style={s.productPressRow}>
@@ -93,16 +105,28 @@ const ProductRow = memo(function ProductRow({ item, selected, onToggle, tokens, 
           {imageUrl ? (
             <Image source={{ uri: imageUrl }} style={s.productThumb} />
           ) : (
-            <View style={[s.productThumb, { backgroundColor: rgb(tokens["--surface-neutral-subtle"]), alignItems: 'center', justifyContent: 'center' }]}>
-               <PackageIcon size={18} color={rgb(tokens["--icon-neutral-tertiary"])} />
+            <View style={[s.productThumb, { backgroundColor: rgb(tokens["--surface-neutral-secondary"]), alignItems: 'center', justifyContent: 'center' }]}>
+               <PackageIcon size={18} color={rgb(tokens["--icon-neutral-weak"])} />
             </View>
           )}
         </ View>
 
         <View style={s.productInfo}>
           <Text style={type.label} numberOfLines={1}>{item.name}</Text>
-          <Text style={[type.caption, { color: rgb(tokens["--text-neutral-secondary"]) }]}>
-            {item.category} • ₱{Number(item.price || 0).toLocaleString("en-PH")}
+          <Text style={[type.caption, { color: rgb(tokens["--text-neutral-secondary"]) }]} numberOfLines={1}>
+            {item.category} • {hasDiscount ? (
+              <>
+                <Text style={{ textDecorationLine: "line-through", color: rgb(tokens["--text-neutral-tertiary"]) }}>
+                  ₱{price.toLocaleString("en-PH")}
+                </Text>
+                {" "}
+                <Text style={{ color: rgb(tokens["--text-success-primary"]) }}>
+                  ₱{effectivePrice.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </Text>
+              </>
+            ) : (
+              `₱${price.toLocaleString("en-PH")}`
+            )}
           </Text>
         </View>
       </Pressable>
