@@ -1,6 +1,7 @@
 import {
 	AUTH_RESET,
 	AUTH_SET_ACCOUNT_PROFILE,
+	AUTH_MERGE_ACCOUNT_PROFILE,
 	AUTH_SET_CURRENT_USER,
 	AUTH_SET_INITIALIZED,
 	AUTH_SET_ROLE_BUSY,
@@ -27,6 +28,14 @@ export default function authReducer(state = initialAuthState, action) {
 				...state,
 				accountProfile: action.payload ?? null,
 			};
+		case AUTH_MERGE_ACCOUNT_PROFILE: {
+			const patch = action.payload ?? {};
+			const prevProfile = state.accountProfile ?? {};
+			return {
+				...state,
+				accountProfile: { ...prevProfile, ...patch },
+			};
+		}
 		case AUTH_SET_ROLE_BUSY:
 			return {
 				...state,
