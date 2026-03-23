@@ -23,3 +23,7 @@
 3/23 2:27 pm
 - slight ui adjustments to remove duplicate top bars
 - fix getmyreview fetching the user deleted review (inactive)
+
+3/23 6:55 pm
+- fix profile refresh
+- remove non-functional notif accordion

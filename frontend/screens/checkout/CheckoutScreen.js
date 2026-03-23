@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { ArrowLeftIcon } from "phosphor-react-native";
 
 import Button from "@components/action/Button";
 import Card from "@components/layout/Card";
 import Screen from "@components/layout/Screen";
+import NavBar from "@components/navigation/NavBar";
 import TextInput from "@components/input/TextInput";
 import { useColors } from "@colors/colorContext";
 import { rgb } from "@styles/styleUtils";
+import { makeTypeStyles } from "@typography/scale";
 import { fonts } from "@typography/fonts";
 import { useAuth } from "../../context/store/auth";
 import { clearCartAfterCheckout } from "../../redux/actions/cartActions";
@@ -72,6 +75,7 @@ function getCheckoutErrorMessage(error) {
 
 export default function CheckoutScreen({ navigation }) {
   const tokens = useColors();
+  const ts = makeTypeStyles(tokens);
   const dispatch = useDispatch();
   const { currentUser, accountProfile, isAuthenticated } = useAuth();
   const [submitting, setSubmitting] = useState(false);
@@ -211,10 +215,28 @@ export default function CheckoutScreen({ navigation }) {
   };
 
   return (
-    <Screen scrollable safeTop={false} contentContainerStyle={s.content}>
+    <Screen scrollable safeTop contentContainerStyle={s.content}>
       <View style={s.container}>
-        <Text style={[s.title, { color: rgb(tokens["--text-neutral-primary"]) }]}>Checkout</Text>
-        <Text style={[s.subtitle, { color: rgb(tokens["--text-neutral-secondary"]) }]}>Review your items and confirm delivery details.</Text>
+        <NavBar
+          title="Checkout"
+          leftSlot={(
+            <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
+              <ArrowLeftIcon size={20} color={rgb(tokens["--icon-neutral-primary"])} />
+            </Pressable>
+          )}
+        />
+
+        <Text
+          style={[
+            ts.bodySm,
+            {
+              color: rgb(tokens["--text-neutral-secondary"]),
+              marginTop: 2,
+            },
+          ]}
+        >
+          Review your items and confirm delivery details.
+        </Text>
 
         <Card variant="outlined" radius="lg" padding="md" style={s.sectionCard}>
           <Text style={[s.sectionTitle, { color: rgb(tokens["--text-neutral-primary"]) }]}>Order Review</Text>
@@ -397,15 +419,6 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     gap: 16,
-  },
-  title: {
-    fontFamily: fonts.special.bold,
-    fontSize: 24,
-  },
-  subtitle: {
-    fontFamily: fonts.ui.medium,
-    fontSize: 13,
-    marginTop: -8,
   },
   sectionCard: {
     gap: 12,
