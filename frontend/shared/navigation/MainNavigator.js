@@ -855,7 +855,7 @@ export default function MainNavigator() {
           <Stack.Screen
             name="Checkout"
             component={CheckoutScreen}
-            options={{ headerShown: true, title: 'Checkout' }}
+            options={{ headerShown: false, title: 'Checkout' }}
           />
           <Stack.Screen
             name="OrderDetails"
