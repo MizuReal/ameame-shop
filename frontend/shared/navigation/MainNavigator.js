@@ -850,7 +850,7 @@ export default function MainNavigator() {
           <Stack.Screen
             name="ReviewEditor"
             component={ReviewEditorScreen}
-            options={{ headerShown: true, title: 'Write Review' }}
+            options={{ headerShown: false, title: 'Write Review' }}
           />
           <Stack.Screen
             name="Checkout"
@@ -860,7 +860,7 @@ export default function MainNavigator() {
           <Stack.Screen
             name="OrderDetails"
             component={OrderDetailsScreen}
-            options={{ headerShown: true, title: 'Order Details' }}
+            options={{ headerShown: false, title: 'Order Details' }}
           />
           <Stack.Screen
             name="AdminReviewDetail"

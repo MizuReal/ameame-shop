@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  ArrowLeftIcon,
   PackageIcon,
   MapPinIcon,
   CreditCardIcon,
@@ -17,6 +18,7 @@ import {
 } from "phosphor-react-native";
 
 import Screen from "@components/layout/Screen";
+import NavBar from "@components/navigation/NavBar";
 import Card from "@components/layout/Card";
 import Button from "@components/action/Button";
 import Badge from "@components/display/Badge";
@@ -228,15 +230,28 @@ export default function OrderDetailsScreen({ route, navigation }) {
   const paymentLabel = (order?.paymentMethod || "cash_on_delivery")
     .replace(/_/g, " ");
 
+  const backIcon = useMemo(
+    () => <ArrowLeftIcon size={20} color={rgb(tokens["--icon-neutral-primary"])} />,
+    [tokens]
+  );
+
   return (
     <Screen
-      safeTop={false}
+      safeTop
       scrollable
       edges={["left", "right", "bottom"]}
       contentContainerStyle={s.content}
     >
       <View style={s.container}>
-        <SectionHeader title="Order Details" />
+        <NavBar
+          title="Order Details"
+          leftSlot={
+            <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
+              {backIcon}
+            </Pressable>
+          }
+        />
+
 
         {/* ── Loading ────────────────────────────────────────────────────── */}
         {loadingOrderDetails ? (
