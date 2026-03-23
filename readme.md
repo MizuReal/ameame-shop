@@ -19,3 +19,7 @@
 - change lightning icon to shopping bag icon
 - higher prio for out of stock tag against discount tag
 - add rating to product card
+
+3/23 2:27 pm
+- slight ui adjustments to remove duplicate top bars
+- fix getmyreview fetching the user deleted review (inactive)

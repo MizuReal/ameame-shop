@@ -276,7 +276,7 @@ async function getMyReview(req, res, next) {
         return sendError(res, 400, "INVALID_PRODUCT_ID", "Invalid product id.");
       }
 
-      const review = await Review.findOne({ user: user._id, product: productId })
+      const review = await Review.findOne({ user: user._id, product: productId, isActive: true })
         .populate("user", "displayName email")
         .lean();
 

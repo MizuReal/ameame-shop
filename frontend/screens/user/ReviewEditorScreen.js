@@ -40,8 +40,8 @@ function StarInput({ value, onChange }) {
             <StarIcon
               size={22}
               weight={active ? "fill" : "regular"}
-              color={rgb(tokens["--text-neutral-primary"])}
-              style={{ opacity: active ? 1 : 0.25 }}
+              color={"rgb(255, 223, 0)"}
+              style={{ opacity: active ? 1 : 0.6 }}
             />
           </Pressable>
         );
