@@ -8,6 +8,7 @@ import {
 	setAccountProfile,
 	setCurrentUser,
 	setInitialized,
+	mergeAccountProfile,
 	setRoleBusy,
 	setRoleError,
 } from "../actions/auth.actions";
@@ -135,6 +136,7 @@ export default function AuthProvider({ children }) {
 			isAdmin: state.accountProfile?.role === 1,
 			refreshAccountProfile,
 			setAccountProfile: (profile) => dispatch(setAccountProfile(profile)),
+			mergeAccountProfile: (patch) => dispatch(mergeAccountProfile(patch)),
 			signOutUser,
 		}),
 		[refreshAccountProfile, signOutUser, state]

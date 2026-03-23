@@ -215,7 +215,7 @@ export default function CheckoutScreen({ navigation }) {
   };
 
   return (
-    <Screen scrollable safeTop contentContainerStyle={s.content}>
+    <Screen scrollable safeTop safeBottom contentContainerStyle={s.content}>
       <View style={s.container}>
         <NavBar
           title="Checkout"

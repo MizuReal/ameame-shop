@@ -214,7 +214,7 @@ function ThemeSwatch({ theme, active, onSelect }) {
 export default function ProfileScreen({ navigation }) {
   const tokens = useColors();
   const { resolvedScheme, setScheme, setTheme } = useTheme();
-  const { currentUser, accountProfile, signOutUser, refreshAccountProfile, setAccountProfile } = useAuth();
+  const { currentUser, accountProfile, signOutUser, mergeAccountProfile } = useAuth();
   const isAdmin = accountProfile?.role === 1;
   const roleLabel = isAdmin ? "Admin" : currentUser ? "User" : "Not signed in";
   const ts = makeTypeStyles(tokens);
@@ -424,8 +424,9 @@ export default function ProfileScreen({ navigation }) {
         }
       );
       await updateProfile(firebaseUser, { photoURL: updatedUser.photoURL || "" }).catch(() => null);
-      setAccountProfile?.(updatedUser);
-      await refreshAccountProfile?.(firebaseUser);
+      mergeAccountProfile?.({
+        photoURL: updatedUser.photoURL || "",
+      });
       setAvatarOverride(updatedUser.photoURL || "");
       showToast("Profile photo updated.", "success");
     } catch (error) {
@@ -433,7 +434,7 @@ export default function ProfileScreen({ navigation }) {
     } finally {
       setAvatarBusy(false);
     }
-  }, [currentUser, refreshAccountProfile]);
+  }, [currentUser, mergeAccountProfile]);
 
   const handleSaveProfile = useCallback(async () => {
     const firebaseUser = auth.currentUser || currentUser;
@@ -457,8 +458,9 @@ export default function ProfileScreen({ navigation }) {
     try {
       const updatedUser = await updateMyProfile(firebaseUser, { displayName: trimmed });
       await updateProfile(firebaseUser, { displayName: updatedUser.displayName || trimmed }).catch(() => null);
-      setAccountProfile?.(updatedUser);
-      await refreshAccountProfile?.(firebaseUser);
+      mergeAccountProfile?.({
+        displayName: updatedUser.displayName || trimmed,
+      });
       setDisplayNameOverride(updatedUser.displayName || trimmed);
       showToast("Profile updated.", "success");
     } catch (error) {
@@ -466,7 +468,7 @@ export default function ProfileScreen({ navigation }) {
     } finally {
       setProfileBusy(false);
     }
-  }, [currentUser, displayName, refreshAccountProfile, validateDisplayName]);
+  }, [currentUser, displayName, mergeAccountProfile, validateDisplayName]);
 
   const handleSaveAddress = useCallback(async () => {
     const firebaseUser = auth.currentUser || currentUser;
@@ -495,8 +497,12 @@ export default function ProfileScreen({ navigation }) {
         province: province.trim(),
         postalCode: postalCode.trim(),
       });
-      setAccountProfile?.(updatedUser);
-      await refreshAccountProfile?.(firebaseUser);
+      mergeAccountProfile?.({
+        addressLine1: addressLine1.trim(),
+        city: city.trim(),
+        province: province.trim(),
+        postalCode: postalCode.trim(),
+      });
       showToast("Address saved.", "success");
     } catch (error) {
       showToast(error?.message || "Unable to save address.", "error");
@@ -509,7 +515,7 @@ export default function ProfileScreen({ navigation }) {
     currentUser,
     postalCode,
     province,
-    refreshAccountProfile,
+    mergeAccountProfile,
     validateAddressFields,
   ]);
 
