@@ -134,6 +134,7 @@ export default function AuthProvider({ children }) {
 			isAuthenticated: Boolean(state.currentUser),
 			isAdmin: state.accountProfile?.role === 1,
 			refreshAccountProfile,
+			setAccountProfile: (profile) => dispatch(setAccountProfile(profile)),
 			signOutUser,
 		}),
 		[refreshAccountProfile, signOutUser, state]

@@ -11,7 +11,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import {
   UserIcon,
   MapPinIcon,
-  BellIcon,
   CameraIcon,
   ShareNetworkIcon,
   SignOutIcon,
@@ -215,7 +214,7 @@ function ThemeSwatch({ theme, active, onSelect }) {
 export default function ProfileScreen({ navigation }) {
   const tokens = useColors();
   const { resolvedScheme, setScheme, setTheme } = useTheme();
-  const { currentUser, accountProfile, signOutUser, refreshAccountProfile } = useAuth();
+  const { currentUser, accountProfile, signOutUser, refreshAccountProfile, setAccountProfile } = useAuth();
   const isAdmin = accountProfile?.role === 1;
   const roleLabel = isAdmin ? "Admin" : currentUser ? "User" : "Not signed in";
   const ts = makeTypeStyles(tokens);
@@ -271,8 +270,6 @@ export default function ProfileScreen({ navigation }) {
   const [city, setCity] = useState(user?.city ?? "");
   const [province, setProvince] = useState(user?.province ?? "");
   const [postalCode, setPostalCode] = useState(user?.postalCode ?? "");
-  const [notifOrders, setNotifOrders] = useState(true);
-  const [notifPromo, setNotifPromo] = useState(false);
 
   const validateDisplayName = useCallback((value) => {
     const trimmed = (value || "").trim();
@@ -427,6 +424,7 @@ export default function ProfileScreen({ navigation }) {
         }
       );
       await updateProfile(firebaseUser, { photoURL: updatedUser.photoURL || "" }).catch(() => null);
+      setAccountProfile?.(updatedUser);
       await refreshAccountProfile?.(firebaseUser);
       setAvatarOverride(updatedUser.photoURL || "");
       showToast("Profile photo updated.", "success");
@@ -459,6 +457,7 @@ export default function ProfileScreen({ navigation }) {
     try {
       const updatedUser = await updateMyProfile(firebaseUser, { displayName: trimmed });
       await updateProfile(firebaseUser, { displayName: updatedUser.displayName || trimmed }).catch(() => null);
+      setAccountProfile?.(updatedUser);
       await refreshAccountProfile?.(firebaseUser);
       setDisplayNameOverride(updatedUser.displayName || trimmed);
       showToast("Profile updated.", "success");
@@ -490,12 +489,13 @@ export default function ProfileScreen({ navigation }) {
 
     setAddressBusy(true);
     try {
-      await updateMyProfile(firebaseUser, {
+      const updatedUser = await updateMyProfile(firebaseUser, {
         addressLine1: addressLine1.trim(),
         city: city.trim(),
         province: province.trim(),
         postalCode: postalCode.trim(),
       });
+      setAccountProfile?.(updatedUser);
       await refreshAccountProfile?.(firebaseUser);
       showToast("Address saved.", "success");
     } catch (error) {
@@ -520,7 +520,6 @@ export default function ProfileScreen({ navigation }) {
   // ── Icon helpers ───────────────────────────────────────────────────────────
   const userIcon = useMemo(() => <UserIcon size={iconSize} color={iconColorSm} />, [iconColorSm]);
   const addressIcon = useMemo(() => <MapPinIcon size={iconSize} color={iconColorSm} />, [iconColorSm]);
-  const bellIcon = useMemo(() => <BellIcon size={iconSize} color={iconColorSm} />, [iconColorSm]);
   const bagIcon = useMemo(() => <ShoppingBagIcon size={18} color={iconColorSm} />, [iconColorSm]);
   const heartIcon = useMemo(() => <HeartIcon size={18} color={iconColorSm} />, [iconColorSm]);
 
@@ -724,10 +723,10 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </SettingsRow>
 
-                {/* Addresses */}
+                {/* Address */}
                 <SettingsRow
                   icon={addressIcon}
-                  title="Addresses"
+                  title="Address"
                   open={openSection === "addresses"}
                   onToggle={() => toggleSection("addresses")}
                 >
@@ -798,29 +797,6 @@ export default function ProfileScreen({ navigation }) {
                         disabled={!isAuthenticated || addressBusy}
                       />
                     </View>
-                  </View>
-                </SettingsRow>
-
-                {/* Notifications */}
-                <SettingsRow
-                  icon={bellIcon}
-                  title="Notifications"
-                  open={openSection === "notifications"}
-                  onToggle={() => toggleSection("notifications")}
-                >
-                  <View style={[s.accordionBody, { gap: 0 }]}>
-                    <ToggleSwitch
-                      value={notifOrders}
-                      onValueChange={setNotifOrders}
-                      label="Order updates"
-                      sublabel="Shipping, delivery, and returns"
-                    />
-                    <ToggleSwitch
-                      value={notifPromo}
-                      onValueChange={setNotifPromo}
-                      label="Promotions"
-                      sublabel="Sales, new arrivals, and offers"
-                    />
                   </View>
                 </SettingsRow>
 
